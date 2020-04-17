@@ -12,7 +12,7 @@ int main() {
         //printf("%s\n", output);
         //railFenceDecryption("T aseghsi  etmsaeist s", output, 0, 3);
         //printf("%s\n", output);
-        twoLevelRailFence("This is a test message", output, 0, 6, 3, 0);
+        twoLevelRailFence("This is a test message", output, 0, 11, 5, 0);
         printf("%s\n", output);
 }
 
@@ -160,6 +160,7 @@ void twoLevelRailFence(char *message, char *cipherText, int length, int A, int B
                 grid[i][j] = '.';
             }
         }
+        printf("A: %d\nB: %d\n", A, B);
 
         int cnt = 0;
         j = 0;
@@ -169,15 +170,18 @@ void twoLevelRailFence(char *message, char *cipherText, int length, int A, int B
 
                 while(j < strlen(message)){
 
-            if(cnt % 2 == 0) // Even count will initiate the "top to bottom" algorithm ir the first for loop, therefore when odd the "else" algorithm will run.
+            if(cnt % 2 == 0) // Even count will initiate the "top to bottom" algorithm ie the first for loop, therefore when odd the "else" algorithm will run.
             {
+                //Fills 0 index to A rails
                 for(i = 0; i < A && j < strlen(message); i++){ // Fill top to bottom for X amount of rails then exit loop.
-                    grid[i][j] = '1'; // Fill in the text.
+                    grid[i][j] = (int)message[j]; // Fill in the text.
+                    printf("%c - ", (int)message[j]);
                     j++;
-                    printf("going down: %d, %d\n", i, j);
+                    printf("going down:%d, %d\n", i, j);
                 }
-                for(i = B-1; i > 0 && j < strlen(message); i--){ //Fill from A rail up to B rail
-                    grid[i][j] = '1';; // Fill in the text.
+                for(i = A-2; i > ((A-1) - B)  && j < strlen(message); i--){ //Fill from A rail up to B rail
+                    grid[i][j] = (int)message[j]; // Fill in the text.
+                    printf("%c - ", (int)message[j]);
                     j++;
                     printf("going up to b: %d, %d\n", i, j);
                 }
@@ -185,20 +189,22 @@ void twoLevelRailFence(char *message, char *cipherText, int length, int A, int B
             else
             {
                 //try i = B; i <= A
-                for(i = A-(B-1); i < B && j < strlen(message); i++){ // Fill from B rail back down to A rail
-                    grid[i][j] = '1'; // Fill in the text.
+                for(i = ((A-B) + 1); i < (A-1) && j < strlen(message); i++){ // Fill from B rail back down to A rail
+                    grid[i][j] = (int)message[j]; // Fill in the text.
+                    printf("%c - ", (int)message[j]);
                     j++;
                     printf("going down to A: %d, %d\n", i, j);
                 }
 
                 for(i = A-1; i > 0 && j < strlen(message); i--){ // Fill in the array bottom to top in between the letter in the top most and the bottom most rails
-                    grid[i][j] = '1'; // Fill in the text.
+                    grid[i][j] = (int)message[j]; // Fill in the text.
+                    printf("%c - ", (int)message[j]);
                     j++;
                     printf("going back to top: %d, %d\n", i, j);
                 }
             }
                 cnt++;
-            }
+        }
 
             for(i = 0; i < A; i++){ //testing the grid
                 for(j = 0; j < strlen(message); j++){
@@ -206,6 +212,7 @@ void twoLevelRailFence(char *message, char *cipherText, int length, int A, int B
             }
             printf("\n");
         }
+        //printing out cipher text by reading left to right; top to bottom.
 /*
             for(i = 0; i < A; i++){
                 for(j = 0; j < strlen(message); j++){
@@ -215,9 +222,91 @@ void twoLevelRailFence(char *message, char *cipherText, int length, int A, int B
                     }
                 }
             }
-            */
+*/
         }
-    }
+    }else if(dir == 1){
 
+        if(A > B && B > 1){ //only gonna work if conditions are met
+
+                while(j < strlen(message)){
+
+            if(cnt % 2 == 0) // Even count will initiate the "top to bottom" algorithm ir the first for loop, therefore when odd the "else" algorithm will run.
+            {
+                //Fills 0 index to A rails
+                for(i = 0; i < A && j < strlen(message); i++){ // Fill top to bottom for X amount of rails then exit loop.
+                    grid[i][j] = -1; // Fill in the text.
+                    j++;
+                }
+                for(i = A-2; i < ((A-B) -1)  && j < strlen(message); i--){ //Fill from A rail up to B rail
+                    grid[i][j] = -1; // Fill in the text.
+                    j++;
+                }
+            }
+            else
+            {
+                //try i = B; i <= A
+                for(i = A-(B-1); i < B && j < strlen(message); i++){ // Fill from B rail back down to A rail
+                    grid[i][j] = -1; // Fill in the text.
+                    j++;
+                }
+
+                for(i = A-1; i > 0 && j < strlen(message); i--){ // Fill in the array bottom to top in between the letter in the top most and the bottom most rails
+                    grid[i][j] = -1; // Fill in the text.
+                    j++;
+                }
+            }
+                cnt++;
+        }
+
+            //filling grid with message
+        int k = 0;
+        for(i = 0; i < A; i++){
+            for(j = 0; j < strlen(message); j++){
+                    if(grid[i][j] != 0){
+                        grid[i][j] = (int)message[k];
+                        k++;
+                }
+            }
+        }
+
+        cnt = 0;
+        j = 0;
+        while(j < strlen(message)){
+
+            if(cnt % 2 == 0) // Even count will initiate the "top to bottom" algorithm ir the first for loop, therefore when odd the "else" algorithm will run.
+            {
+                //Fills 0 index to A rails
+                for(i = 0; i < A && j < strlen(message); i++){ // Fill top to bottom for X amount of rails then exit loop.
+                    cipherText = grid[i][j];
+                    printf("%c", cipherText);
+                    j++;
+                }
+                for(i = A-2; i < ((A-B) -1)  && j < strlen(message); i--){ //Fill from A rail up to B rail
+                    cipherText = grid[i][j];
+                    printf("%c", cipherText);
+                    j++;
+                }
+            }
+            else
+            {
+                //try i = B; i <= A
+                for(i = A-(B-1); i < B && j < strlen(message); i++){ // Fill from B rail back down to A rail
+                    cipherText = grid[i][j];
+                    printf("%c", cipherText);
+                    j++;
+                }
+
+                for(i = A-1; i > 0 && j < strlen(message); i--){ // Fill in the array bottom to top in between the letter in the top most and the bottom most rails
+                    cipherText = grid[i][j];
+                    printf("%c", cipherText);
+                    j++;
+                }
+            }
+                cnt++;
+        }
+    }else{
+    printf("Wrong input, please input either 0 for encryption or 1 for decryption");
+    }
 return;
+    }
 }
